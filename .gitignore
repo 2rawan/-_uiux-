@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.hoplite/artifacts/
+
+delivery/
+Forma-UIUX-Complete.zip
+
+public/downloads/
