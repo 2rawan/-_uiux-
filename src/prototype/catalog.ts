@@ -1,0 +1,1507 @@
+export type ScreenKind =
+  | "dashboard"
+  | "form"
+  | "table"
+  | "office"
+  | "meeting"
+  | "detail"
+  | "empty"
+  | "success";
+
+export type ScreenField = {
+  label: string;
+  type?: "text" | "password" | "tel" | "date" | "time" | "select" | "textarea";
+  placeholder?: string;
+  options?: string[];
+  required?: boolean;
+};
+
+export type Screen = {
+  id: string;
+  title: string;
+  section: string;
+  description: string;
+  kind: ScreenKind;
+  fields?: ScreenField[];
+  stats?: { label: string; value: string }[];
+  columns?: string[];
+  rows?: string[][];
+  actions: { label: string; target: string; primary?: boolean }[];
+  notice?: string;
+};
+
+export const sections = [
+  "Start",
+  "Workspace",
+  "People",
+  "Attendance",
+  "Recordings",
+  "Organization",
+  "Platform",
+];
+
+const simulated =
+  "Interactive prototype only. No real account, invitation, message, or authentication request is sent.";
+const billingNotice =
+  "Plan and payment details are illustrative. This prototype does not contact a payment provider or charge a card.";
+const driveNotice =
+  "Drive connection is simulated. No Google account is contacted and no files are read or uploaded.";
+
+export const screens: Screen[] = [
+  {
+    id: "overview",
+    title: "Good morning, Olivia",
+    section: "Start",
+    description:
+      "A calm command center for today's virtual office, upcoming sessions, and attendance exceptions.",
+    kind: "dashboard",
+    stats: [
+      { label: "Members online", value: "18 / 24" },
+      { label: "Sessions today", value: "6" },
+      { label: "On-time arrival", value: "94%" },
+      { label: "Needs review", value: "2" },
+    ],
+    columns: ["Next session", "Team", "Starts", "Room"],
+    rows: [
+      ["Design standup", "Design", "10:00 AM", "Meeting room"],
+      ["Frontend mentorship", "Engineering", "11:30 AM", "Focus room"],
+      ["Weekly planning", "Everyone", "2:00 PM", "Conference room"],
+    ],
+    actions: [
+      { label: "Open virtual office", target: "office", primary: true },
+      { label: "View weekly schedule", target: "schedule" },
+      { label: "Review attendance", target: "attendance-report" },
+      { label: "Manage members", target: "members" },
+      { label: "Open recordings", target: "recordings" },
+      { label: "Messages and channels", target: "messages-inbox" },
+      { label: "Customize avatar and office", target: "avatar-theme" },
+      { label: "Connect calendar", target: "calendar-connect" },
+      { label: "AI meeting notes", target: "ai-summary" },
+      { label: "Manage guest links", target: "access-links" },
+      { label: "Choose recording folder", target: "drive-folder-select" },
+      { label: "Organization settings", target: "org-settings" },
+      { label: "Platform console", target: "platform-orgs" },
+      { label: "Explore the product", target: "landing" },
+      { label: "Mentor home", target: "mentor-dashboard" },
+      { label: "Member home", target: "student-dashboard" },
+    ],
+  },
+  {
+    id: "landing",
+    title: "A better place to work together",
+    section: "Start",
+    description:
+      "Welcome to Forma: a virtual workspace where teams meet, learn, and keep a clear view of attendance.",
+    kind: "dashboard",
+    stats: [
+      { label: "A shared office", value: "One space" },
+      { label: "Team sessions", value: "On your time" },
+      { label: "Attendance", value: "Clear & fair" },
+    ],
+    actions: [
+      { label: "Sign in", target: "sign-in", primary: true },
+      { label: "Accept an invitation", target: "invite-accept" },
+      { label: "Enter as a guest", target: "guest-access" },
+      { label: "Open demo overview", target: "overview" },
+    ],
+  },
+  {
+    id: "sign-in",
+    title: "Welcome back",
+    section: "Start",
+    description:
+      "Sign in with the phone number and password associated with your organization.",
+    kind: "form",
+    fields: [
+      { label: "Phone number", type: "tel", placeholder: "+1 555 010 2040", required: true },
+      { label: "Password", type: "password", placeholder: "Enter your password", required: true },
+      { label: "Organization", type: "select", options: ["Acme Studio", "Juniper Learning"] },
+    ],
+    actions: [
+      { label: "Continue to demo overview", target: "overview", primary: true },
+      { label: "Forgot password?", target: "forgot-password" },
+      { label: "Use an invitation link", target: "invite-accept" },
+      { label: "Back to welcome", target: "landing" },
+    ],
+    notice: simulated,
+  },
+  {
+    id: "forgot-password",
+    title: "Reset your password",
+    section: "Start",
+    description:
+      "Enter your account phone number. For privacy, a real service should not reveal whether an account exists.",
+    kind: "form",
+    fields: [
+      { label: "Phone number", type: "tel", placeholder: "+1 555 010 2040", required: true },
+    ],
+    actions: [
+      { label: "Continue to verification", target: "otp-verify", primary: true },
+      { label: "Back to sign in", target: "sign-in" },
+      { label: "Return to welcome", target: "landing" },
+    ],
+    notice: "Prototype only: no SMS is sent and no phone number is stored.",
+  },
+  {
+    id: "otp-verify",
+    title: "Verify your phone",
+    section: "Start",
+    description:
+      "Enter the six-digit code sent to your phone to continue password recovery.",
+    kind: "form",
+    fields: [
+      { label: "Verification code", type: "text", placeholder: "000 000", required: true },
+    ],
+    actions: [
+      { label: "Verify and set password", target: "password-reset", primary: true },
+      { label: "Back to phone number", target: "forgot-password" },
+      { label: "Return to sign in", target: "sign-in" },
+    ],
+    notice: "Demo code entry only. No SMS provider is connected.",
+  },
+  {
+    id: "password-reset",
+    title: "Choose a new password",
+    section: "Start",
+    description:
+      "Set a strong password for your account. A real product should enforce its published password policy.",
+    kind: "form",
+    fields: [
+      { label: "New password", type: "password", placeholder: "At least 12 characters", required: true },
+      { label: "Confirm password", type: "password", placeholder: "Re-enter your password", required: true },
+    ],
+    actions: [
+      { label: "Save and sign in", target: "sign-in", primary: true },
+      { label: "Back to verification", target: "otp-verify" },
+    ],
+    notice: simulated,
+  },
+  {
+    id: "invite-accept",
+    title: "You're invited to Acme Studio",
+    section: "Start",
+    description:
+      "Review the organization and role before accepting a time-limited invitation.",
+    kind: "detail",
+    stats: [
+      { label: "Organization", value: "Acme Studio" },
+      { label: "Invited role", value: "Student / Member" },
+      { label: "Invited by", value: "Maya Chen" },
+      { label: "Expires", value: "In 5 days" },
+    ],
+    actions: [
+      { label: "Accept invitation", target: "sign-in", primary: true },
+      { label: "Invitation expired?", target: "expired-link" },
+      { label: "Back to welcome", target: "landing" },
+    ],
+    notice: "Fictional invitation for prototype navigation. No invitation is accepted or created.",
+  },
+  {
+    id: "guest-access",
+    title: "Join as a guest",
+    section: "Start",
+    description:
+      "Use a workspace-issued guest link to enter a public room with limited access.",
+    kind: "form",
+    fields: [
+      { label: "Display name", type: "text", placeholder: "How should we call you?", required: true },
+      { label: "Guest access link", type: "text", placeholder: "Paste your invitation link", required: true },
+    ],
+    actions: [
+      { label: "Preview guest workspace", target: "office", primary: true },
+      { label: "Link is private or unavailable", target: "private-denied" },
+      { label: "Link expired", target: "expired-link" },
+      { label: "Back to welcome", target: "landing" },
+    ],
+    notice: "Guest access is illustrative; no link is validated and no identity is impersonated.",
+  },
+  {
+    id: "private-denied",
+    title: "This space isn't available to guests",
+    section: "Start",
+    description:
+      "This workspace requires a member account or a guest link scoped to a public room.",
+    kind: "empty",
+    actions: [
+      { label: "Sign in as a member", target: "sign-in", primary: true },
+      { label: "Try another guest link", target: "guest-access" },
+      { label: "Return to welcome", target: "landing" },
+    ],
+    notice: "Access-denied example only. No authorization decision is performed by this prototype.",
+  },
+  {
+    id: "expired-link",
+    title: "This link has expired",
+    section: "Start",
+    description:
+      "For security, workspace and invitation links can expire. Ask an organization admin for a fresh link.",
+    kind: "empty",
+    actions: [
+      { label: "Contact an organization admin", target: "members", primary: true },
+      { label: "Sign in instead", target: "sign-in" },
+      { label: "Back to welcome", target: "landing" },
+    ],
+    notice: simulated,
+  },
+  {
+    id: "office",
+    title: "Acme Studio virtual office",
+    section: "Workspace",
+    description:
+      "A shared, navigable office with room occupancy, today's sessions, and collaboration controls.",
+    kind: "office",
+    stats: [
+      { label: "In the office", value: "18 members" },
+      { label: "Rooms in use", value: "3 of 6" },
+      { label: "Next session", value: "Design standup · 10:00" },
+    ],
+    actions: [
+      { label: "Join meeting room", target: "meeting-prejoin", primary: true },
+      { label: "Open focus room settings", target: "room-settings" },
+      { label: "Edit office map", target: "office-map-editor" },
+      { label: "View schedule", target: "schedule" },
+      { label: "Open messages and channels", target: "messages-inbox" },
+      { label: "Customize your avatar", target: "avatar-theme" },
+      { label: "Sync calendar", target: "calendar-connect" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Illustrative map and presence. Real-time movement, room access, and media are not connected.",
+  },
+  {
+    id: "office-map-editor",
+    title: "Office map editor",
+    section: "Workspace",
+    description:
+      "Arrange rooms and shared areas, then preview the layout before publishing it to your organization.",
+    kind: "office",
+    stats: [
+      { label: "Map", value: "Acme Studio · Floor 1" },
+      { label: "Rooms", value: "6" },
+      { label: "Draft changes", value: "2" },
+    ],
+    actions: [
+      { label: "Save map draft", target: "office", primary: true },
+      { label: "Configure a room", target: "room-settings" },
+      { label: "Preview office", target: "office" },
+    ],
+    notice: "Map edits are illustrative and are not saved to an organization.",
+  },
+  {
+    id: "room-settings",
+    title: "Focus room settings",
+    section: "Workspace",
+    description:
+      "Set a room's name, capacity, access, and availability so members know how to use it.",
+    kind: "form",
+    fields: [
+      { label: "Room name", type: "text", placeholder: "Focus room", required: true },
+      { label: "Capacity", type: "select", options: ["2 people", "6 people", "8 people", "12 people"] },
+      { label: "Access", type: "select", options: ["Organization members", "Team only", "Public guest room"] },
+      { label: "Room description", type: "textarea", placeholder: "A quiet room for focused work" },
+    ],
+    actions: [
+      { label: "Save room settings", target: "office", primary: true },
+      { label: "Edit map layout", target: "office-map-editor" },
+      { label: "Back to office", target: "office" },
+    ],
+    notice: "Room capacity and access settings are demonstration content; no permissions are enforced.",
+  },
+  {
+    id: "meeting-prejoin",
+    title: "Ready to join?",
+    section: "Workspace",
+    description:
+      "Check the room and your device preferences before joining the scheduled meeting.",
+    kind: "meeting",
+    stats: [
+      { label: "Meeting", value: "Design standup" },
+      { label: "Room", value: "Meeting room" },
+      { label: "Participants", value: "4 invited" },
+    ],
+    actions: [
+      { label: "Join meeting", target: "meeting-live", primary: true },
+      { label: "Review recording consent", target: "recording-consent" },
+      { label: "Return to office", target: "office" },
+    ],
+    notice: "Camera and microphone previews are not activated; this demo does not request device access.",
+  },
+  {
+    id: "meeting-live",
+    title: "Design standup",
+    section: "Workspace",
+    description:
+      "A live-meeting layout with participants, call controls, consent state, and room information.",
+    kind: "meeting",
+    stats: [
+      { label: "In this meeting", value: "4 people" },
+      { label: "Duration", value: "12 minutes" },
+      { label: "Recording", value: "Not started" },
+    ],
+    actions: [
+      { label: "Participant controls", target: "participant-controls", primary: true },
+      { label: "Start recording flow", target: "recording-consent" },
+      { label: "Share screen", target: "screen-share" },
+      { label: "Create AI summary and transcript", target: "ai-summary" },
+      { label: "End and return to office", target: "office" },
+    ],
+    notice: "Illustrative meeting only. No audio, video, recording, or network session is running.",
+  },
+  {
+    id: "recording-consent",
+    title: "Recording consent",
+    section: "Workspace",
+    description:
+      "Make recording status and participant consent clear before a meeting is recorded.",
+    kind: "meeting",
+    stats: [
+      { label: "Meeting", value: "Design standup" },
+      { label: "Participants", value: "3 of 4 acknowledged" },
+      { label: "Recording policy", value: "Consent required" },
+    ],
+    actions: [
+      { label: "Continue to meeting controls", target: "meeting-live", primary: true },
+      { label: "Start recording after consent", target: "recording-active" },
+      { label: "Review participant status", target: "participant-controls" },
+      { label: "Cancel and leave", target: "office" },
+    ],
+    notice: "Consent is a prototype state only. No participant is recorded or notified.",
+  },
+  {
+    id: "participant-controls",
+    title: "People in this meeting",
+    section: "Workspace",
+    description:
+      "Review participant access, speaking status, and recording consent without exposing private data.",
+    kind: "table",
+    columns: ["Participant", "Role", "Microphone", "Consent"],
+    rows: [
+      ["Olivia Rhye", "Mentor", "On", "Acknowledged"],
+      ["Phoenix Baker", "Student", "Muted", "Acknowledged"],
+      ["Lana Steiner", "Mentor", "On", "Pending"],
+      ["Guest participant", "Guest", "Muted", "Acknowledged"],
+    ],
+    actions: [
+      { label: "Back to meeting", target: "meeting-live", primary: true },
+      { label: "Review consent", target: "recording-consent" },
+      { label: "See all members", target: "members" },
+    ],
+    notice: "Fictional participants and controls; no microphone is muted and no recording consent is collected.",
+  },
+  {
+    id: "screen-share",
+    title: "Share your screen",
+    section: "Workspace",
+    description:
+      "Choose a share option and review who can see it before presenting in the meeting.",
+    kind: "meeting",
+    stats: [
+      { label: "Room", value: "Design standup" },
+      { label: "Audience", value: "4 participants" },
+      { label: "Sharing", value: "Not active" },
+    ],
+    actions: [
+      { label: "Preview sharing state", target: "meeting-live", primary: true },
+      { label: "Check participant list", target: "participant-controls" },
+      { label: "Back to office", target: "office" },
+    ],
+    notice: "Screen sharing is not activated and this prototype never captures your screen.",
+  },
+  {
+    id: "recording-active",
+    title: "Recording in progress",
+    section: "Workspace",
+    description:
+      "Show a persistent recording indicator, elapsed time, consent coverage, and a clear stop action.",
+    kind: "meeting",
+    stats: [
+      { label: "Elapsed", value: "00:18:42" },
+      { label: "Consent", value: "4 of 4 acknowledged" },
+      { label: "Destination", value: "Acme Studio Drive" },
+    ],
+    actions: [
+      { label: "Stop recording and review upload", target: "recording-detail", primary: true },
+      { label: "View participants", target: "participant-controls" },
+      { label: "Return to meeting", target: "meeting-live" },
+    ],
+    notice: "Recording state is illustrative. No meeting content is captured or uploaded.",
+  },
+  {
+    id: "members",
+    title: "People at Acme Studio",
+    section: "People",
+    description:
+      "Find people, review their organization role and team, and manage invitations from one directory.",
+    kind: "table",
+    stats: [
+      { label: "Active members", value: "24" },
+      { label: "Pending invites", value: "3" },
+      { label: "Teams", value: "4" },
+    ],
+    columns: ["Name", "Role", "Team", "Status", "Last active"],
+    rows: [
+      ["Olivia Rhye", "Mentor", "Design", "Online", "Now"],
+      ["Phoenix Baker", "Student", "Engineering", "Online", "Now"],
+      ["Lana Steiner", "Mentor", "Engineering", "In a session", "2 min ago"],
+      ["Demi Wilkinson", "Student", "Design", "Away", "18 min ago"],
+      ["Drew Cano", "Student", "Marketing", "Invited", "—"],
+    ],
+    actions: [
+      { label: "Invite a member", target: "member-invite", primary: true },
+      { label: "Open Olivia's member profile", target: "member-detail" },
+      { label: "Manage roles", target: "roles" },
+      { label: "Manage teams", target: "teams" },
+      { label: "Manage invitations and guest links", target: "access-links" },
+      { label: "Manage guest links", target: "access-links" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Names and activity are fictional. Member records and invitations are not stored.",
+  },
+  {
+    id: "member-invite",
+    title: "Invite someone to Acme Studio",
+    section: "People",
+    description:
+      "Choose a role and team, then send a time-limited invitation link to a new member.",
+    kind: "form",
+    fields: [
+      { label: "Full name", type: "text", placeholder: "Taylor Morgan", required: true },
+      { label: "Phone number", type: "tel", placeholder: "+1 555 010 2040", required: true },
+      { label: "Role", type: "select", options: ["Organization admin", "Mentor", "Student / Member", "Guest"] },
+      { label: "Team", type: "select", options: ["Design", "Engineering", "Marketing", "Operations"] },
+      { label: "Personal note", type: "textarea", placeholder: "Add a short welcome" },
+    ],
+    actions: [
+      { label: "Preview invitation", target: "invite-accept", primary: true },
+      { label: "Review role permissions", target: "roles" },
+      { label: "Back to members", target: "members" },
+    ],
+    notice: "Demo form only. No SMS, invitation, or personal data is transmitted or persisted.",
+  },
+  {
+    id: "member-detail",
+    title: "Olivia Rhye",
+    section: "People",
+    description:
+      "A member profile with role, team, current status, and links to attendance and schedule context.",
+    kind: "detail",
+    stats: [
+      { label: "Role", value: "Mentor" },
+      { label: "Team", value: "Design" },
+      { label: "Member since", value: "Mar 12, 2025" },
+      { label: "Status", value: "Active" },
+    ],
+    actions: [
+      { label: "View attendance history", target: "attendance-member", primary: true },
+      { label: "View weekly schedule", target: "schedule" },
+      { label: "Edit organization role", target: "roles" },
+      { label: "Back to directory", target: "members" },
+    ],
+    notice: "Fictional profile for demonstration; private member records are not accessed.",
+  },
+  {
+    id: "roles",
+    title: "Roles and permissions",
+    section: "People",
+    description:
+      "Review the least-privilege capabilities available to organization admins, mentors, members, and guests.",
+    kind: "table",
+    columns: ["Role", "Members", "Schedules", "Attendance", "Organization settings"],
+    rows: [
+      ["Organization admin", "Manage", "Manage", "Review & correct", "Manage"],
+      ["Mentor", "View assigned", "View assigned", "Own & assigned", "No access"],
+      ["Student / Member", "View directory", "Own schedule", "Own records", "No access"],
+      ["Guest", "No directory", "Public sessions", "No access", "No access"],
+    ],
+    actions: [
+      { label: "Invite with a role", target: "member-invite", primary: true },
+      { label: "Manage team assignments", target: "teams" },
+      { label: "Back to members", target: "members" },
+    ],
+    notice: "Permission matrix is illustrative; access must be enforced server-side in a production service.",
+  },
+  {
+    id: "teams",
+    title: "Teams",
+    section: "People",
+    description:
+      "Group members for shared schedules, reporting, and access to relevant workspaces.",
+    kind: "table",
+    columns: ["Team", "Lead", "Members", "Weekly sessions"],
+    rows: [
+      ["Design", "Olivia Rhye", "6", "8"],
+      ["Engineering", "Lana Steiner", "9", "12"],
+      ["Marketing", "Maya Chen", "5", "5"],
+      ["Operations", "Jordan Lee", "4", "3"],
+    ],
+    actions: [
+      { label: "Create a team", target: "team-create", primary: true },
+      { label: "View member directory", target: "members" },
+      { label: "Review roles", target: "roles" },
+    ],
+    notice: "Team names and assignments are fictional examples.",
+  },
+  {
+    id: "team-create",
+    title: "Create a team",
+    section: "People",
+    description:
+      "Give a team a clear name, assign a lead, and select members for schedules and reporting.",
+    kind: "form",
+    fields: [
+      { label: "Team name", type: "text", placeholder: "Customer success", required: true },
+      { label: "Team lead", type: "select", options: ["Olivia Rhye", "Lana Steiner", "Maya Chen"] },
+      { label: "Members", type: "select", options: ["Select members", "Design team", "Engineering team"] },
+      { label: "Description", type: "textarea", placeholder: "What this team works on" },
+    ],
+    actions: [
+      { label: "Save team", target: "teams", primary: true },
+      { label: "Back to teams", target: "teams" },
+    ],
+    notice: "Team changes are not saved in this prototype.",
+  },
+  {
+    id: "schedule",
+    title: "Weekly schedule",
+    section: "Attendance",
+    description:
+      "Plan recurring team sessions across the week with clear timezone and attendance expectations.",
+    kind: "table",
+    stats: [
+      { label: "Sessions this week", value: "28" },
+      { label: "Teams scheduled", value: "4" },
+      { label: "Organization timezone", value: "America / Los Angeles" },
+    ],
+    columns: ["Day", "Session", "Team", "Time", "Room"],
+    rows: [
+      ["Monday", "Design standup", "Design", "10:00–10:30 AM", "Meeting room"],
+      ["Tuesday", "Mentorship hour", "Engineering", "11:30 AM–12:30 PM", "Focus room"],
+      ["Wednesday", "Weekly planning", "Everyone", "2:00–3:00 PM", "Conference room"],
+      ["Friday", "Project review", "Marketing", "1:00–1:45 PM", "Meeting room"],
+    ],
+    actions: [
+      { label: "Create a session", target: "session-create", primary: true },
+      { label: "Edit Design standup", target: "session-edit" },
+      { label: "Set holidays", target: "holidays" },
+      { label: "Request time off", target: "leave-request" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Sample schedule only. Times and recurrence are not persisted or synced to calendars.",
+  },
+  {
+    id: "session-create",
+    title: "Create a scheduled session",
+    section: "Attendance",
+    description:
+      "Set a one-off or recurring session, assign its audience and room, and define the attendance grace period.",
+    kind: "form",
+    fields: [
+      { label: "Session name", type: "text", placeholder: "Weekly mentorship", required: true },
+      { label: "Team", type: "select", options: ["Design", "Engineering", "Marketing", "Everyone"] },
+      { label: "Date", type: "date", required: true },
+      { label: "Start time", type: "time", required: true },
+      { label: "End time", type: "time", required: true },
+      { label: "Room", type: "select", options: ["Meeting room", "Focus room", "Conference room"] },
+      { label: "Grace period", type: "select", options: ["0 minutes", "5 minutes", "10 minutes"] },
+      { label: "Repeat", type: "select", options: ["Does not repeat", "Every week", "Weekdays"] },
+    ],
+    actions: [
+      { label: "Save session", target: "schedule", primary: true },
+      { label: "Review attendance rules", target: "org-policies" },
+      { label: "Back to schedule", target: "schedule" },
+    ],
+    notice: "A saved session is not created by this prototype; recurring schedule rules are examples only.",
+  },
+  {
+    id: "session-edit",
+    title: "Edit Design standup",
+    section: "Attendance",
+    description:
+      "Update a scheduled session while reviewing who is affected and whether past attendance snapshots remain unchanged.",
+    kind: "form",
+    fields: [
+      { label: "Session name", type: "text", placeholder: "Design standup", required: true },
+      { label: "Date", type: "date", required: true },
+      { label: "Start time", type: "time", required: true },
+      { label: "End time", type: "time", required: true },
+      { label: "Timezone", type: "select", options: ["America / Los Angeles", "America / New York", "UTC"] },
+      { label: "Apply changes to", type: "select", options: ["This session only", "This and future sessions"] },
+    ],
+    actions: [
+      { label: "Save changes", target: "schedule", primary: true },
+      { label: "View session attendance", target: "attendance-session" },
+      { label: "Back to weekly schedule", target: "schedule" },
+    ],
+    notice: "Editing is illustrative. Attendance records are not modified.",
+  },
+  {
+    id: "holidays",
+    title: "Organization holidays",
+    section: "Attendance",
+    description:
+      "Mark organization-wide holidays so recurring sessions and attendance expectations are clear.",
+    kind: "table",
+    columns: ["Holiday", "Date", "Applies to", "Status"],
+    rows: [
+      ["New Year's Day", "Jan 1, 2027", "Everyone", "Scheduled"],
+      ["Spring break", "Mar 22–26, 2027", "Everyone", "Scheduled"],
+      ["Summer day", "Jul 5, 2027", "Everyone", "Draft"],
+    ],
+    actions: [
+      { label: "Add a holiday", target: "holiday-create", primary: true },
+      { label: "Return to schedule", target: "schedule" },
+      { label: "Review organization policies", target: "org-policies" },
+    ],
+    notice: "Example holiday calendar; no dates are applied to real schedules.",
+  },
+  {
+    id: "holiday-create",
+    title: "Add an organization holiday",
+    section: "Attendance",
+    description:
+      "Specify whether a date is a full or partial holiday and how recurring sessions should be handled.",
+    kind: "form",
+    fields: [
+      { label: "Holiday name", type: "text", placeholder: "Organization day", required: true },
+      { label: "Date", type: "date", required: true },
+      { label: "Applies to", type: "select", options: ["Everyone", "Selected teams"] },
+      { label: "Session handling", type: "select", options: ["Skip sessions", "Keep sessions", "Review individually"] },
+      { label: "Notes", type: "textarea", placeholder: "Optional context for members" },
+    ],
+    actions: [
+      { label: "Save holiday", target: "holidays", primary: true },
+      { label: "Back to holidays", target: "holidays" },
+    ],
+    notice: "Holiday details are not saved in this prototype.",
+  },
+  {
+    id: "leave-request",
+    title: "Request time off",
+    section: "Attendance",
+    description:
+      "Submit planned leave with dates and a reason so mentors and administrators can review schedule coverage.",
+    kind: "form",
+    fields: [
+      { label: "First day", type: "date", required: true },
+      { label: "Last day", type: "date", required: true },
+      { label: "Leave type", type: "select", options: ["Vacation", "Sick leave", "Personal", "Other"] },
+      { label: "Note for reviewer", type: "textarea", placeholder: "Optional note" },
+    ],
+    actions: [
+      { label: "Submit leave request", target: "leave-review", primary: true },
+      { label: "View my schedule", target: "personal-schedule" },
+      { label: "Back to team schedule", target: "schedule" },
+    ],
+    notice: "Leave details are fictional and are not submitted or stored.",
+  },
+  {
+    id: "leave-review",
+    title: "Leave request review",
+    section: "Attendance",
+    description:
+      "Review a pending leave request, check schedule conflicts, and record an auditable decision.",
+    kind: "detail",
+    stats: [
+      { label: "Requested by", value: "Phoenix Baker" },
+      { label: "Dates", value: "Dec 14–16, 2026" },
+      { label: "Type", value: "Vacation" },
+      { label: "Conflicting sessions", value: "1" },
+    ],
+    actions: [
+      { label: "Approve request", target: "personal-schedule", primary: true },
+      { label: "Review attendance context", target: "attendance-member" },
+      { label: "Return to schedule", target: "schedule" },
+    ],
+    notice: "Review actions are simulated; no leave status changes or notifications are made.",
+  },
+  {
+    id: "attendance-report",
+    title: "Attendance report",
+    section: "Attendance",
+    description:
+      "Compare scheduled time with verified presence, punctuality, breaks, and reviewed exceptions.",
+    kind: "dashboard",
+    stats: [
+      { label: "Scheduled sessions", value: "126" },
+      { label: "On-time arrival", value: "94%" },
+      { label: "Confirmed hours", value: "312.5" },
+      { label: "Corrections pending", value: "2" },
+    ],
+    columns: ["Member", "Team", "Sessions", "On time", "Confirmed time", "Exceptions"],
+    rows: [
+      ["Olivia Rhye", "Design", "14", "100%", "32h 10m", "0"],
+      ["Phoenix Baker", "Engineering", "12", "92%", "28h 45m", "1"],
+      ["Lana Steiner", "Engineering", "13", "85%", "30h 02m", "1"],
+      ["Demi Wilkinson", "Design", "11", "100%", "24h 30m", "0"],
+    ],
+    actions: [
+      { label: "Open Phoenix's attendance", target: "attendance-member", primary: true },
+      { label: "View a session", target: "attendance-session" },
+      { label: "Review pending corrections", target: "correction-queue" },
+      { label: "Export report", target: "attendance-export" },
+      { label: "Configure notifications", target: "attendance-notifications" },
+      { label: "Mentor dashboard", target: "mentor-dashboard" },
+      { label: "Member dashboard", target: "student-dashboard" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Illustrative attendance metrics only. No location or device tracking is performed.",
+  },
+  {
+    id: "attendance-member",
+    title: "Phoenix Baker · attendance",
+    section: "Attendance",
+    description:
+      "A member-level view of scheduled sessions, grace-adjusted arrival, confirmed connected time, and corrections.",
+    kind: "detail",
+    stats: [
+      { label: "Sessions this month", value: "12" },
+      { label: "On time", value: "11 / 12" },
+      { label: "Confirmed connected", value: "28h 45m" },
+      { label: "Pending corrections", value: "1" },
+    ],
+    columns: ["Date", "Session", "Scheduled", "First joined", "Confirmed time", "Status"],
+    rows: [
+      ["Nov 17", "Frontend mentorship", "11:30 AM", "11:32 AM", "58 min", "On time"],
+      ["Nov 16", "Engineering standup", "9:00 AM", "9:14 AM", "26 min", "Late"],
+      ["Nov 13", "Code review", "1:00 PM", "12:58 PM", "43 min", "On time"],
+    ],
+    actions: [
+      { label: "Request an attendance correction", target: "correction-request", primary: true },
+      { label: "Review pending correction", target: "correction-queue" },
+      { label: "Open session detail", target: "attendance-session" },
+      { label: "Back to attendance report", target: "attendance-report" },
+    ],
+    notice: "Fictional member attendance. Confirmed presence and correction history are not real records.",
+  },
+  {
+    id: "attendance-session",
+    title: "Frontend mentorship · session detail",
+    section: "Attendance",
+    description:
+      "Inspect scheduled start and end, attendance events, grace period, and documented session exceptions.",
+    kind: "detail",
+    stats: [
+      { label: "Scheduled", value: "11:30 AM–12:30 PM" },
+      { label: "Grace period", value: "5 minutes" },
+      { label: "Participants", value: "5" },
+      { label: "Corrections", value: "1 pending" },
+    ],
+    columns: ["Member", "First joined", "Last left", "Confirmed time", "Status"],
+    rows: [
+      ["Olivia Rhye", "11:28 AM", "12:31 PM", "63 min", "On time"],
+      ["Phoenix Baker", "11:32 AM", "12:30 PM", "58 min", "On time"],
+      ["Lana Steiner", "11:44 AM", "12:29 PM", "45 min", "Late"],
+    ],
+    actions: [
+      { label: "Review correction queue", target: "correction-queue", primary: true },
+      { label: "Open member attendance", target: "attendance-member" },
+      { label: "Return to report", target: "attendance-report" },
+    ],
+    notice: "Sample session timeline only; records are not sourced from real presence events.",
+  },
+  {
+    id: "correction-request",
+    title: "Request an attendance correction",
+    section: "Attendance",
+    description:
+      "Explain a missed or incorrect attendance event. Requests remain pending until an authorized reviewer decides.",
+    kind: "form",
+    fields: [
+      { label: "Session", type: "select", options: ["Frontend mentorship · Nov 17", "Engineering standup · Nov 16"] },
+      { label: "Correction type", type: "select", options: ["Arrival time", "Departure time", "Session marked absent", "Connected time"] },
+      { label: "Requested time", type: "time", required: true },
+      { label: "Reason", type: "textarea", placeholder: "Describe what happened and why the record should be reviewed", required: true },
+    ],
+    actions: [
+      { label: "Submit for review", target: "correction-queue", primary: true },
+      { label: "View my attendance", target: "attendance-member" },
+      { label: "Back to report", target: "attendance-report" },
+    ],
+    notice: "Correction request is a demo state and does not change an attendance record.",
+  },
+  {
+    id: "correction-queue",
+    title: "Attendance corrections",
+    section: "Attendance",
+    description:
+      "Review requested changes with their reason and original record. Approved edits should retain an audit trail.",
+    kind: "table",
+    stats: [
+      { label: "Needs review", value: "2" },
+      { label: "Approved this month", value: "4" },
+      { label: "Median review time", value: "3 hours" },
+    ],
+    columns: ["Member", "Session", "Requested change", "Reason", "Status"],
+    rows: [
+      ["Phoenix Baker", "Frontend mentorship", "Arrival · 11:30 AM", "Reconnect after network drop", "Pending"],
+      ["Lana Steiner", "Engineering standup", "Departure · 9:45 AM", "Facilitated session wrap-up", "Pending"],
+      ["Demi Wilkinson", "Design critique", "Arrival · 1:00 PM", "Room change not reflected", "Approved"],
+    ],
+    actions: [
+      { label: "Review Phoenix's correction", target: "correction-review", primary: true },
+      { label: "View approved correction history", target: "correction-approved" },
+      { label: "Open session details", target: "attendance-session" },
+      { label: "Back to report", target: "attendance-report" },
+    ],
+    notice: "Fictional review queue. No correction decision or audit event is saved.",
+  },
+  {
+    id: "correction-review",
+    title: "Review Phoenix's correction",
+    section: "Attendance",
+    description:
+      "Compare the original verified event with the requested change, capture a reviewer reason, and decide fairly.",
+    kind: "detail",
+    stats: [
+      { label: "Original arrival", value: "11:32 AM" },
+      { label: "Requested arrival", value: "11:30 AM" },
+      { label: "Session", value: "Frontend mentorship · Nov 17" },
+      { label: "Status", value: "Pending review" },
+    ],
+    fields: [
+      { label: "Reviewer note", type: "textarea", placeholder: "Document the reason for your decision", required: true },
+    ],
+    actions: [
+      { label: "Approve correction", target: "correction-approved", primary: true },
+      { label: "Return to correction queue", target: "correction-queue" },
+      { label: "Open member context", target: "attendance-member" },
+    ],
+    notice: "Approval is not applied. In production, reviewer identity and the before/after values belong in an audit log.",
+  },
+  {
+    id: "correction-approved",
+    title: "Correction decision recorded",
+    section: "Attendance",
+    description:
+      "A confirmation view for the reviewed correction, including the recorded outcome and audit context.",
+    kind: "success",
+    stats: [
+      { label: "Member", value: "Phoenix Baker" },
+      { label: "Updated arrival", value: "11:30 AM" },
+      { label: "Decision", value: "Approved" },
+      { label: "Audit reference", value: "DEMO-ATT-204" },
+    ],
+    actions: [
+      { label: "Return to correction queue", target: "correction-queue", primary: true },
+      { label: "View attendance report", target: "attendance-report" },
+      { label: "Open audit log", target: "audit-log" },
+    ],
+    notice: "Confirmation state only; no attendance data or audit event has actually changed.",
+  },
+  {
+    id: "attendance-export",
+    title: "Export attendance report",
+    section: "Attendance",
+    description:
+      "Choose a date range, teams, and report fields before preparing a privacy-conscious attendance export.",
+    kind: "form",
+    fields: [
+      { label: "From", type: "date", required: true },
+      { label: "To", type: "date", required: true },
+      { label: "Teams", type: "select", options: ["All teams", "Design", "Engineering", "Marketing"] },
+      { label: "Include", type: "select", options: ["Summary only", "Session detail", "Corrections and reasons"] },
+    ],
+    actions: [
+      { label: "Preview export", target: "attendance-report", primary: true },
+      { label: "Configure report notifications", target: "attendance-notifications" },
+      { label: "Back to attendance report", target: "attendance-report" },
+    ],
+    notice: "Export preparation is simulated; no file is generated or downloaded.",
+  },
+  {
+    id: "attendance-notifications",
+    title: "Attendance notifications",
+    section: "Attendance",
+    description:
+      "Choose which attendance events notify members, mentors, or administrators and how often summaries arrive.",
+    kind: "form",
+    fields: [
+      { label: "Late arrival alerts", type: "select", options: ["Admin and mentor", "Admin only", "Off"] },
+      { label: "Missing-session alerts", type: "select", options: ["After 15 minutes", "After 30 minutes", "Off"] },
+      { label: "Correction updates", type: "select", options: ["Member and reviewer", "Reviewer only", "Off"] },
+      { label: "Weekly summary", type: "select", options: ["Monday morning", "Friday afternoon", "Off"] },
+    ],
+    actions: [
+      { label: "Save notification preferences", target: "attendance-report", primary: true },
+      { label: "Review organization policies", target: "org-policies" },
+      { label: "Back to report", target: "attendance-report" },
+    ],
+    notice: "Notification preferences are not saved and no email, SMS, or push notification is sent.",
+  },
+  {
+    id: "mentor-dashboard",
+    title: "Mentor home",
+    section: "Attendance",
+    description:
+      "A focused view of assigned learners, today's sessions, and attendance follow-ups for a mentor.",
+    kind: "dashboard",
+    stats: [
+      { label: "Assigned learners", value: "6" },
+      { label: "Sessions today", value: "3" },
+      { label: "Attendance follow-ups", value: "1" },
+    ],
+    columns: ["Learner", "Next session", "Attendance this week", "Follow-up"],
+    rows: [
+      ["Phoenix Baker", "Frontend mentorship · 11:30", "4 / 5 on time", "Review request"],
+      ["Demi Wilkinson", "Design critique · 1:00", "5 / 5 on time", "None"],
+      ["Drew Cano", "Project review · 2:30", "3 / 4 on time", "Check schedule"],
+    ],
+    actions: [
+      { label: "Review learner attendance", target: "attendance-member", primary: true },
+      { label: "Open today's schedule", target: "personal-schedule" },
+      { label: "Open shared office", target: "office" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Mentor scope and learner records are sample data, not real assignments.",
+  },
+  {
+    id: "student-dashboard",
+    title: "Your workspace",
+    section: "Attendance",
+    description:
+      "Members can see their own upcoming sessions, attendance progress, and requests without exposing peers' private records.",
+    kind: "dashboard",
+    stats: [
+      { label: "Sessions this week", value: "5" },
+      { label: "On-time arrival", value: "92%" },
+      { label: "Confirmed hours", value: "28h 45m" },
+    ],
+    columns: ["Upcoming", "When", "Room", "Status"],
+    rows: [
+      ["Frontend mentorship", "Today · 11:30 AM", "Focus room", "Upcoming"],
+      ["Engineering standup", "Tomorrow · 9:00 AM", "Meeting room", "Upcoming"],
+      ["Code review", "Friday · 1:00 PM", "Conference room", "Upcoming"],
+    ],
+    actions: [
+      { label: "Open my schedule", target: "personal-schedule", primary: true },
+      { label: "View my attendance", target: "attendance-member" },
+      { label: "Request a correction", target: "correction-request" },
+      { label: "Join the office", target: "office" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Illustrative self-service view. A real member should only access their own records.",
+  },
+  {
+    id: "personal-schedule",
+    title: "My schedule",
+    section: "Attendance",
+    description:
+      "A member or mentor view of assigned sessions, timezone, room, and approved time away.",
+    kind: "table",
+    columns: ["Day", "Session", "Time", "Room", "Attendance"],
+    rows: [
+      ["Today", "Frontend mentorship", "11:30 AM", "Focus room", "Upcoming"],
+      ["Wednesday", "Engineering standup", "9:00 AM", "Meeting room", "Upcoming"],
+      ["Friday", "Code review", "1:00 PM", "Conference room", "Upcoming"],
+      ["Dec 14", "Approved time off", "All day", "—", "Approved"],
+    ],
+    actions: [
+      { label: "Request time off", target: "leave-request", primary: true },
+      { label: "Review my attendance", target: "attendance-member" },
+      { label: "Return to member home", target: "student-dashboard" },
+      { label: "Return to mentor home", target: "mentor-dashboard" },
+    ],
+    notice: "Personal schedule is fictional and does not sync with a calendar.",
+  },
+  {
+    id: "recordings",
+    title: "Recording history",
+    section: "Recordings",
+    description:
+      "Follow meeting recordings from consent and processing through Drive upload, retry, and retention.",
+    kind: "table",
+    stats: [
+      { label: "This month", value: "18 recordings" },
+      { label: "Uploaded", value: "15" },
+      { label: "In progress", value: "1" },
+      { label: "Needs attention", value: "2" },
+    ],
+    columns: ["Meeting", "Recorded", "Duration", "Drive status", "Owner"],
+    rows: [
+      ["Design standup", "Nov 17", "32 min", "Uploaded", "Olivia Rhye"],
+      ["Frontend mentorship", "Nov 16", "58 min", "Uploading · 72%", "Lana Steiner"],
+      ["Project review", "Nov 14", "44 min", "Retry needed", "Maya Chen"],
+      ["Weekly planning", "Nov 12", "61 min", "Uploaded", "Jordan Lee"],
+    ],
+    actions: [
+      { label: "Open Design standup recording", target: "recording-detail", primary: true },
+      { label: "Monitor upload progress", target: "recording-uploading" },
+      { label: "Review a failed upload", target: "recording-failed" },
+      { label: "Connect Google Drive", target: "drive-connect" },
+      { label: "Select recording folder", target: "drive-folder-select" },
+      { label: "Generate meeting notes", target: "ai-summary" },
+      { label: "Review storage usage", target: "drive-quota" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Fictional recording metadata. No meeting audio or video exists in this prototype.",
+  },
+  {
+    id: "recording-detail",
+    title: "Design standup · recording",
+    section: "Recordings",
+    description:
+      "Review consent, processing status, destination, access, and retention for one meeting recording.",
+    kind: "detail",
+    stats: [
+      { label: "Recorded", value: "Nov 17, 2026 · 10:00 AM" },
+      { label: "Duration", value: "32 minutes" },
+      { label: "Consent", value: "4 of 4 acknowledged" },
+      { label: "Drive status", value: "Uploaded" },
+    ],
+    actions: [
+      { label: "Open recording history", target: "recordings", primary: true },
+      { label: "View upload details", target: "recording-uploading" },
+      { label: "Manage Drive connection", target: "drive-connected" },
+      { label: "Review retention policy", target: "retention-policy" },
+    ],
+    notice: "Metadata is fictional; playback and download are intentionally unavailable.",
+  },
+  {
+    id: "recording-uploading",
+    title: "Recording upload in progress",
+    section: "Recordings",
+    description:
+      "Show upload progress, retry-safe job status, destination folder, and the time of the last update.",
+    kind: "detail",
+    stats: [
+      { label: "Recording", value: "Frontend mentorship · Nov 16" },
+      { label: "Progress", value: "72% · 418 MB of 580 MB" },
+      { label: "Destination", value: "Acme Studio / Recordings" },
+      { label: "Last update", value: "2 minutes ago" },
+    ],
+    actions: [
+      { label: "Return to recording history", target: "recordings", primary: true },
+      { label: "Review retryable failure state", target: "recording-failed" },
+      { label: "Check Drive connection", target: "drive-connected" },
+    ],
+    notice: "Upload progress is illustrative; no file or background transfer exists.",
+  },
+  {
+    id: "recording-failed",
+    title: "Upload needs attention",
+    section: "Recordings",
+    description:
+      "Explain a retryable upload error, protect the original recording, and show the next safe step.",
+    kind: "detail",
+    stats: [
+      { label: "Recording", value: "Project review · Nov 14" },
+      { label: "Status", value: "Retry needed" },
+      { label: "Last attempt", value: "Nov 14 · 4:42 PM" },
+      { label: "Issue", value: "Drive connection expired" },
+    ],
+    actions: [
+      { label: "Reconnect Google Drive", target: "drive-connect", primary: true },
+      { label: "Review recording history", target: "recordings" },
+      { label: "Check storage quota", target: "drive-quota" },
+    ],
+    notice: "Retry is not executed. A real retry should be idempotent and preserve the source recording.",
+  },
+  {
+    id: "drive-connect",
+    title: "Connect Google Drive",
+    section: "Recordings",
+    description:
+      "Choose an organization-owned Drive destination and review the requested access before connecting.",
+    kind: "form",
+    fields: [
+      { label: "Connection owner", type: "select", options: ["Organization service account", "Workspace administrator"] },
+      { label: "Destination folder", type: "text", placeholder: "Acme Studio / Recordings", required: true },
+      { label: "Upload policy", type: "select", options: ["After each meeting", "Admin approval required"] },
+    ],
+    actions: [
+      { label: "Review Google access consent", target: "drive-consent", primary: true },
+      { label: "Choose Drive folder", target: "drive-folder-select" },
+      { label: "View recordings", target: "recordings" },
+      { label: "Review organization privacy settings", target: "org-policies" },
+    ],
+    notice: driveNotice,
+  },
+  {
+    id: "drive-consent",
+    title: "Review Drive access",
+    section: "Recordings",
+    description:
+      "Explain the organization-controlled scope and destination before an administrator authorizes a Drive connection.",
+    kind: "detail",
+    stats: [
+      { label: "Requested access", value: "Create files in selected folder" },
+      { label: "Folder", value: "Acme Studio / Recordings" },
+      { label: "Account owner", value: "Organization admin" },
+      { label: "Sharing", value: "Organization restricted" },
+    ],
+    actions: [
+      { label: "Continue to connected state", target: "drive-connected", primary: true },
+      { label: "Cancel connection", target: "drive-connect" },
+      { label: "Review privacy policies", target: "org-policies" },
+    ],
+    notice: "Consent screen is illustrative; no Google OAuth request or token is created.",
+  },
+  {
+    id: "drive-connected",
+    title: "Google Drive connected",
+    section: "Recordings",
+    description:
+      "Review connection owner, selected folder, upload policy, and options to revoke access or inspect storage.",
+    kind: "success",
+    stats: [
+      { label: "Account", value: "admin@northstar.example" },
+      { label: "Folder", value: "Acme Studio / Recordings" },
+      { label: "Connected", value: "Nov 12, 2026" },
+      { label: "Upload policy", value: "After each meeting" },
+    ],
+    actions: [
+      { label: "View recording history", target: "recordings", primary: true },
+      { label: "Review storage quota", target: "drive-quota" },
+      { label: "Revoke connection", target: "drive-revoked" },
+      { label: "Review retention policy", target: "retention-policy" },
+    ],
+    notice: driveNotice,
+  },
+  {
+    id: "drive-revoked",
+    title: "Drive connection revoked",
+    section: "Recordings",
+    description:
+      "Show the organization that new uploads are paused and recordings remain available for an authorized reconnect.",
+    kind: "empty",
+    stats: [
+      { label: "Connection", value: "Revoked" },
+      { label: "Pending uploads", value: "2 paused" },
+      { label: "Existing Drive files", value: "Unaffected" },
+    ],
+    actions: [
+      { label: "Reconnect Drive", target: "drive-connect", primary: true },
+      { label: "Review paused recordings", target: "recordings" },
+      { label: "Review audit history", target: "audit-log" },
+    ],
+    notice: "Revocation is simulated; no account token or Drive access is changed.",
+  },
+  {
+    id: "drive-quota",
+    title: "Recording storage usage",
+    section: "Recordings",
+    description:
+      "Monitor organization recording storage, retention headroom, and the next action when a quota is near its limit.",
+    kind: "dashboard",
+    stats: [
+      { label: "Used", value: "68.4 GB" },
+      { label: "Available", value: "31.6 GB" },
+      { label: "Plan limit", value: "100 GB" },
+      { label: "Oldest recording", value: "Mar 04, 2026" },
+    ],
+    columns: ["Category", "Storage", "Share", "Policy"],
+    rows: [
+      ["Meeting recordings", "61.2 GB", "89%", "Retain 180 days"],
+      ["Processing queue", "5.8 GB", "8%", "Clear after upload"],
+      ["Pending retries", "1.4 GB", "3%", "Retry or review"],
+    ],
+    actions: [
+      { label: "Review retention settings", target: "retention-policy", primary: true },
+      { label: "View recording history", target: "recordings" },
+      { label: "Manage billing plan", target: "billing-plans" },
+      { label: "Check Drive connection", target: "drive-connected" },
+    ],
+    notice: "Storage values are sample data; no Drive metadata is queried.",
+  },
+  {
+    id: "org-settings",
+    title: "Organization settings",
+    section: "Organization",
+    description:
+      "Manage organization identity, workspace defaults, privacy policy, and operational controls.",
+    kind: "dashboard",
+    stats: [
+      { label: "Organization", value: "Acme Studio" },
+      { label: "Plan", value: "Team" },
+      { label: "Members", value: "24 of 40" },
+      { label: "Timezone", value: "America / Los Angeles" },
+    ],
+    actions: [
+      { label: "Edit attendance policies", target: "org-policies", primary: true },
+      { label: "Set recording retention", target: "retention-policy" },
+      { label: "Review audit log", target: "audit-log" },
+      { label: "Manage billing", target: "billing-plans" },
+      { label: "View usage", target: "billing-usage" },
+      { label: "Manage invitations and guest links", target: "access-links" },
+      { label: "Connect team calendar", target: "calendar-connect" },
+      { label: "AI meeting notes", target: "ai-summary" },
+      { label: "Back to overview", target: "overview" },
+    ],
+    notice: "Organization settings are illustrative and do not change a real tenant.",
+  },
+  {
+    id: "org-policies",
+    title: "Attendance and workspace policies",
+    section: "Organization",
+    description:
+      "Make attendance calculations, privacy expectations, and room access rules clear and consistent.",
+    kind: "form",
+    fields: [
+      { label: "Default grace period", type: "select", options: ["0 minutes", "5 minutes", "10 minutes"] },
+      { label: "Counted connected time", type: "select", options: ["Verified session intervals", "Scheduled duration", "Manual review"] },
+      { label: "Correction approval", type: "select", options: ["Organization admin", "Admin or assigned mentor"] },
+      { label: "Guest access", type: "select", options: ["Disabled", "Public rooms only", "Admin-issued links"] },
+      { label: "Policy notes", type: "textarea", placeholder: "Explain expectations to members" },
+    ],
+    actions: [
+      { label: "Save policy draft", target: "org-settings", primary: true },
+      { label: "Review notification behavior", target: "attendance-notifications" },
+      { label: "Set recording retention", target: "retention-policy" },
+      { label: "Back to organization settings", target: "org-settings" },
+    ],
+    notice: "Policy choices are examples. Real policies require review for the organization's privacy obligations.",
+  },
+  {
+    id: "retention-policy",
+    title: "Recording retention policy",
+    section: "Organization",
+    description:
+      "Define recording retention and deletion responsibilities with clear notice to members and auditors.",
+    kind: "form",
+    fields: [
+      { label: "Retention period", type: "select", options: ["30 days", "90 days", "180 days", "1 year"] },
+      { label: "Deletion behavior", type: "select", options: ["Delete from Drive and queue", "Admin review before deletion"] },
+      { label: "Recording access", type: "select", options: ["Meeting participants", "Organization admins", "Participants and admins"] },
+      { label: "Member notice", type: "textarea", placeholder: "Describe how members are informed" },
+    ],
+    actions: [
+      { label: "Save retention draft", target: "org-settings", primary: true },
+      { label: "Review recording storage", target: "drive-quota" },
+      { label: "Review audit log", target: "audit-log" },
+      { label: "Back to settings", target: "org-settings" },
+    ],
+    notice: "Retention is not enforced and no files are deleted by this prototype.",
+  },
+  {
+    id: "audit-log",
+    title: "Organization audit log",
+    section: "Organization",
+    description:
+      "Review sensitive organization changes with actor, timestamp, target, and an auditable reason.",
+    kind: "table",
+    columns: ["Time", "Actor", "Event", "Target", "Reason"],
+    rows: [
+      ["Nov 17 · 10:12 AM", "Maya Chen", "Correction approved", "Phoenix Baker · Nov 16", "Reconnect verified"],
+      ["Nov 16 · 2:40 PM", "Olivia Rhye", "Member invited", "Drew Cano", "Engineering cohort"],
+      ["Nov 12 · 9:18 AM", "Maya Chen", "Drive connected", "Recordings folder", "Organization setup"],
+      ["Nov 10 · 4:05 PM", "Maya Chen", "Retention updated", "180 days", "Policy review"],
+    ],
+    actions: [
+      { label: "Review corrections", target: "correction-queue", primary: true },
+      { label: "Open organization policies", target: "org-policies" },
+      { label: "Return to organization settings", target: "org-settings" },
+    ],
+    notice: "Sample audit entries only; this is not a security or compliance record.",
+  },
+  {
+    id: "billing-plans",
+    title: "Plans for your organization",
+    section: "Organization",
+    description:
+      "Compare member and recording limits, then review a plan before continuing to a simulated checkout.",
+    kind: "table",
+    columns: ["Plan", "Members", "Recording storage", "Support", "Monthly price"],
+    rows: [
+      ["Starter", "Up to 10", "25 GB", "Community", "$0"],
+      ["Team", "Up to 40", "100 GB", "Priority email", "$49"],
+      ["Business", "Up to 150", "1 TB", "Dedicated support", "$179"],
+    ],
+    actions: [
+      { label: "Review Team plan checkout", target: "billing-checkout", primary: true },
+      { label: "View invoices", target: "billing-invoices" },
+      { label: "Review usage", target: "billing-usage" },
+      { label: "Back to organization settings", target: "org-settings" },
+    ],
+    notice: billingNotice,
+  },
+  {
+    id: "billing-checkout",
+    title: "Review your Team plan",
+    section: "Organization",
+    description:
+      "Review plan limits and the illustrative billing summary before a simulated confirmation.",
+    kind: "detail",
+    stats: [
+      { label: "Plan", value: "Team · monthly" },
+      { label: "Members included", value: "40" },
+      { label: "Recording storage", value: "100 GB" },
+      { label: "Due today", value: "$49.00" },
+    ],
+    fields: [
+      { label: "Billing contact", type: "text", placeholder: "Maya Chen" },
+      { label: "Billing email", type: "text", placeholder: "billing@northstar.example" },
+      { label: "Billing cycle", type: "select", options: ["Monthly", "Annual"] },
+    ],
+    actions: [
+      { label: "Confirm demo plan", target: "billing-success", primary: true },
+      { label: "Compare plans", target: "billing-plans" },
+      { label: "Review invoices", target: "billing-invoices" },
+    ],
+    notice: billingNotice,
+  },
+  {
+    id: "billing-success",
+    title: "Plan updated",
+    section: "Organization",
+    description:
+      "Confirm the selected plan and provide a path to usage and invoice history.",
+    kind: "success",
+    stats: [
+      { label: "Organization", value: "Acme Studio" },
+      { label: "Plan", value: "Team" },
+      { label: "Next renewal", value: "Dec 18, 2026" },
+      { label: "Receipt", value: "DEMO-INV-028" },
+    ],
+    actions: [
+      { label: "View invoices", target: "billing-invoices", primary: true },
+      { label: "Review plan usage", target: "billing-usage" },
+      { label: "Back to organization settings", target: "org-settings" },
+    ],
+    notice: billingNotice,
+  },
+  {
+    id: "billing-invoices",
+    title: "Invoices and billing history",
+    section: "Organization",
+    description:
+      "Review invoice dates, amounts, and payment status for the organization subscription.",
+    kind: "table",
+    columns: ["Invoice", "Issued", "Plan", "Amount", "Status"],
+    rows: [
+      ["DEMO-INV-028", "Nov 18, 2026", "Team", "$49.00", "Paid"],
+      ["DEMO-INV-027", "Oct 18, 2026", "Team", "$49.00", "Paid"],
+      ["DEMO-INV-026", "Sep 18, 2026", "Team", "$49.00", "Paid"],
+    ],
+    actions: [
+      { label: "Review plans", target: "billing-plans", primary: true },
+      { label: "View plan usage", target: "billing-usage" },
+      { label: "Back to organization settings", target: "org-settings" },
+    ],
+    notice: "Invoice rows are fictional. There are no downloadable invoices or payment records.",
+  },
+  {
+    id: "billing-usage",
+    title: "Plan usage",
+    section: "Organization",
+    description:
+      "Understand member, session, and recording usage before reaching a plan limit.",
+    kind: "dashboard",
+    stats: [
+      { label: "Members", value: "24 / 40" },
+      { label: "Recording storage", value: "68.4 / 100 GB" },
+      { label: "Rooms", value: "6" },
+      { label: "Sessions this month", value: "126" },
+    ],
+    columns: ["Resource", "Current", "Included", "Usage"],
+    rows: [
+      ["Members", "24", "40", "60%"],
+      ["Recording storage", "68.4 GB", "100 GB", "68%"],
+      ["Active rooms", "6", "Unlimited", "Within plan"],
+    ],
+    actions: [
+      { label: "Compare plans", target: "billing-plans", primary: true },
+      { label: "Review recording storage", target: "drive-quota" },
+      { label: "View invoices", target: "billing-invoices" },
+      { label: "Organization settings", target: "org-settings" },
+    ],
+    notice: "Usage is illustrative and is not metered against a subscription.",
+  },
+  {
+    id: "platform-orgs",
+    title: "Platform organizations",
+    section: "Platform",
+    description:
+      "A restricted super-admin overview of tenant health, plan status, and support follow-ups.",
+    kind: "table",
+    stats: [
+      { label: "Organizations", value: "42" },
+      { label: "Active members", value: "1,280" },
+      { label: "Open incidents", value: "1" },
+    ],
+    columns: ["Organization", "Plan", "Members", "Region", "Health"],
+    rows: [
+      ["Acme Studio", "Team", "24", "US West", "Healthy"],
+      ["Juniper Learning", "Business", "86", "US East", "Healthy"],
+      ["Cedar Workshop", "Starter", "9", "EU Central", "Review"],
+    ],
+    actions: [
+      { label: "Open Acme Studio organization", target: "platform-org-detail", primary: true },
+      { label: "Create an organization", target: "platform-org-create" },
+      { label: "View platform health", target: "platform-health" },
+      { label: "Return to workspace", target: "overview" },
+    ],
+    notice: "Fictional tenant overview. Platform access is privileged and should be audited and justified.",
+  },
+  {
+    id: "platform-org-detail",
+    title: "Acme Studio · platform view",
+    section: "Platform",
+    description:
+      "Review tenant-level configuration and health metadata without opening member content or private recordings.",
+    kind: "detail",
+    stats: [
+      { label: "Tenant status", value: "Active" },
+      { label: "Plan", value: "Team" },
+      { label: "Members", value: "24" },
+      { label: "Region", value: "US West" },
+    ],
+    columns: ["Service", "Status", "Last check", "Notes"],
+    rows: [
+      ["Workspace API", "Healthy", "2 min ago", "Within SLO"],
+      ["Recording queue", "Healthy", "1 min ago", "2 jobs pending"],
+      ["Drive integration", "Attention", "12 min ago", "Reauthorization needed"],
+    ],
+    actions: [
+      { label: "Return to organization list", target: "platform-orgs", primary: true },
+      { label: "Open health dashboard", target: "platform-health" },
+      { label: "View organization audit log", target: "audit-log" },
+    ],
+    notice: "Support view contains sample operational metadata only; no tenant content is exposed.",
+  },
+  {
+    id: "platform-org-create",
+    title: "Create an organization",
+    section: "Platform",
+    description:
+      "Provision a new tenant with an explicit region, initial plan, and accountable organization owner.",
+    kind: "form",
+    fields: [
+      { label: "Organization name", type: "text", placeholder: "Cedar Workshop", required: true },
+      { label: "Owner name", type: "text", placeholder: "Jordan Lee", required: true },
+      { label: "Owner phone", type: "tel", placeholder: "+1 555 010 2040", required: true },
+      { label: "Initial plan", type: "select", options: ["Starter", "Team", "Business"] },
+      { label: "Data region", type: "select", options: ["US West", "US East", "EU Central"] },
+    ],
+    actions: [
+      { label: "Preview organization setup", target: "platform-org-detail", primary: true },
+      { label: "Return to organization list", target: "platform-orgs" },
+    ],
+    notice: "Tenant provisioning is simulated; no organization or user account is created.",
+  },
+  {
+    id: "platform-health",
+    title: "Platform health",
+    section: "Platform",
+    description:
+      "Review service availability and operational queue indicators without accessing customer content.",
+    kind: "dashboard",
+    stats: [
+      { label: "API availability", value: "99.98%" },
+      { label: "Realtime connections", value: "1,042" },
+      { label: "Upload jobs queued", value: "12" },
+      { label: "Open incidents", value: "1" },
+    ],
+    columns: ["Service", "Status", "Latency", "Updated"],
+    rows: [
+      ["Workspace API", "Operational", "112 ms", "1 min ago"],
+      ["Realtime presence", "Operational", "84 ms", "1 min ago"],
+      ["Recording uploads", "Degraded", "Queue: 12", "2 min ago"],
+      ["Authentication", "Operational", "96 ms", "1 min ago"],
+    ],
+    actions: [
+      { label: "Review organizations", target: "platform-orgs", primary: true },
+      { label: "Inspect Acme Studio health", target: "platform-org-detail" },
+      { label: "Return to overview", target: "overview" },
+    ],
+    notice: "Operational metrics are illustrative and do not represent a live platform.",
+  },
+];
