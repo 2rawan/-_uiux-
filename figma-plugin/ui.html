@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Forma — استيراد التصميم</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font: 13px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #292b30;
+        background: #f7f8fa;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 20px; }
+      main { display: grid; gap: 14px; }
+      .brand { display: flex; align-items: center; gap: 9px; }
+      .mark { width: 25px; height: 25px; border-radius: 8px; background: #8069b8; position: relative; }
+      .mark::after { content: ""; position: absolute; width: 8px; height: 8px; inset: 8px; border: 2px solid white; border-radius: 3px; }
+      h1 { font-size: 16px; margin: 0; }
+      p { color: #737680; line-height: 1.65; margin: 0; }
+      .card { background: white; border: 1px solid #eaeaf0; border-radius: 12px; padding: 14px; }
+      label { display: grid; gap: 8px; font-weight: 600; }
+      input[type="file"] { width: 100%; font-size: 12px; font-weight: 400; }
+      button { border: 0; border-radius: 8px; padding: 11px 14px; color: white; background: #8069b8; font: inherit; font-weight: 600; cursor: pointer; }
+      button:disabled { opacity: .55; cursor: wait; }
+      #status { min-height: 20px; font-size: 12px; }
+      #status[data-kind="error"] { color: #b44852; }
+      #status[data-kind="success"] { color: #42765a; }
+      .hint { font-size: 11px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand"><span class="mark" aria-hidden="true"></span><h1>Forma · نموذج Figma قابل للتعديل</h1></div>
+      <p>اختاري ملف JSON المُصدّر لإنشاء شاشات أصلية قابلة للتحرير مع نسختين لسطح المكتب والهاتف وروابط تنقّل بينها.</p>
+      <div class="card">
+        <label for="design-file">ملف Forma للتصميم
+          <input id="design-file" type="file" accept="application/json,.json" />
+        </label>
+      </div>
+      <button id="import" type="button" disabled>إنشاء النموذج التفاعلي</button>
+      <p id="status" role="status" aria-live="polite">اختاري ملف JSON للبدء.</p>
+      <p class="hint">سيُنشأ تصميم جديد في صفحة مستقلة. لا يرفع هذا الإضافة ملفاتك إلى أي خدمة خارجية.</p>
+    </main>
+    <script>
+      const fileInput = document.getElementById("design-file");
+      const importButton = document.getElementById("import");
+      const status = document.getElementById("status");
+      let selectedFile;
+
+      fileInput.addEventListener("change", () => {
+        selectedFile = fileInput.files && fileInput.files[0];
+        importButton.disabled = !selectedFile;
+        status.dataset.kind = "";
+        status.textContent = selectedFile ? `الملف المحدد: ${selectedFile.name}` : "اختاري ملف JSON للبدء.";
+      });
+
+      importButton.addEventListener("click", async () => {
+        if (!selectedFile) return;
+        importButton.disabled = true;
+        status.dataset.kind = "";
+        status.textContent = "جارٍ قراءة الملف وإنشاء الإطارات والروابط…";
+        try {
+          const text = await selectedFile.text();
+          const data = JSON.parse(text);
+          parent.postMessage({ pluginMessage: { type: "import-design", data } }, "*");
+        } catch (error) {
+          status.dataset.kind = "error";
+          status.textContent = error instanceof Error ? `تعذرت قراءة JSON: ${error.message}` : "تعذرت قراءة ملف JSON.";
+          importButton.disabled = false;
+        }
+      });
+
+      window.onmessage = (event) => {
+        const message = event.data && event.data.pluginMessage;
+        if (!message) return;
+        importButton.disabled = false;
+        status.dataset.kind = message.ok ? "success" : "error";
+        status.textContent = message.ok
+          ? `اكتمل النموذج: ${message.screens} شاشة، ${message.frames} إطار، و${message.links} رابط تنقّل.`
+          : `لم يكتمل الاستيراد: ${message.error}`;
+      };
+    </script>
+  </body>
+</html>
